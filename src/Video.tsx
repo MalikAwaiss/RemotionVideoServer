@@ -35,7 +35,7 @@ export const RemotionVideo = () => {
         // npx remotion render src/index.jsx <id> out/video.mp4
         id="Construction"
         component={Construction}
-        durationInFrames={1120}
+        durationInFrames={1990}
         fps={30}
         width={1920}
         height={1080}
