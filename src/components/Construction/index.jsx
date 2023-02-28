@@ -5,10 +5,14 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import VideoWrapper from "../../shared/VideoWrapper";
 
 import { FirstMid } from "./FirstMid";
 import { Intro } from "./Intro";
 import { SecondMid } from "./SecondMid";
+import firstMidVid from "../Construction/FirstMid/firstmid.mp4";
+import secondMidVid from "../Construction/SecondMid/secondmid.mp4";
+import introVid from "../Construction/Intro/intro-1.mp4";
 const DURATIONS = {
   INTRO: {
     FROM: 0,
@@ -20,10 +24,10 @@ const DURATIONS = {
   },
   SECOND_MID: {
     FROM: 300,
-    DURATION: 800,
+    DURATION: 1000,
   },
   ENDING: {
-    FROM: 1100,
+    FROM: 1300,
     DURATION: 100,
   },
 };
@@ -39,28 +43,27 @@ export const Construction = ({ titleText = "",midText="",secondMid="",ending="",
         from={DURATIONS.INTRO.FROM}
         durationInFrames={DURATIONS.INTRO.DURATION}
       >
-      <div style={{zIndex:999,fontSize:40,fontWeight:'bolder'}}>{titleText}</div>
-        <Intro duration={DURATIONS.INTRO} />
+        <VideoWrapper videoFile={introVid} duration={DURATIONS.INTRO} />
+        {/* <Intro duration={DURATIONS.INTRO} /> */}
       </Sequence>
       <Sequence
         from={DURATIONS.FIRST_MID.FROM}
         durationInFrames={DURATIONS.FIRST_MID.DURATION}
       >
-      <div style={{zIndex:999,fontSize:40,fontWeight:'bolder'}}>{midText}</div>
-        <FirstMid duration={DURATIONS.FIRST_MID} />
+        {/* <FirstMid duration={DURATIONS.FIRST_MID} /> */}
+        <VideoWrapper videoFile={firstMidVid} duration={DURATIONS.FIRST_MID} />
       </Sequence>
       <Sequence
         from={DURATIONS.SECOND_MID.FROM}
         durationInFrames={DURATIONS.SECOND_MID.DURATION}
       >
-      <div style={{zIndex:999,fontSize:40,fontWeight:'bolder'}}>{secondMid}</div>
-        <SecondMid duration={DURATIONS.SECOND_MID} />
+        <VideoWrapper videoFile={secondMidVid} duration={DURATIONS.SECOND_MID} />
+        {/* <SecondMid duration={DURATIONS.SECOND_MID} /> */}
       </Sequence>
       <Sequence
         from={DURATIONS.ENDING.FROM}
         durationInFrames={DURATIONS.ENDING.DURATION}
       >
-      <div style={{zIndex:999,fontSize:40,fontWeight:'bolder'}}>{ending}</div>
         <Intro duration={DURATIONS.ENDING} />
       </Sequence>
     </AbsoluteFill>

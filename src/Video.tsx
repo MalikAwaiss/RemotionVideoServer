@@ -35,7 +35,7 @@ export const RemotionVideo = () => {
         // npx remotion render src/index.jsx <id> out/video.mp4
         id="Construction"
         component={Construction}
-        durationInFrames={1000}
+        durationInFrames={1120}
         fps={30}
         width={1920}
         height={1080}
@@ -45,7 +45,7 @@ export const RemotionVideo = () => {
       <Composition
         // You can take the "id" to render a video:
         // npx remotion render src/index.jsx <id> out/video.mp4
-        id="HelloWorld"
+        id="HairDresser"
         component={HairDresser}
         durationInFrames={1000}
         fps={30}
