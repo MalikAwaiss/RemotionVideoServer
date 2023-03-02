@@ -135,7 +135,14 @@ app.post('/generateVideo',jsonParser,async (req,res)=>{
       },
       assetsInfo,
     });
-    res.download(outputDir+'/'+fileName)
+    const stream = fs.createReadStream(finalOutput);
+    res.set({
+      'Content-Disposition': `attachment; filename='${fileName}'`,
+      'Content-Type': 'application/video',
+    });
+    res.setHeader('fileName',fileName)
+    stream.pipe(res);
+    // res.download(outputDir+'/'+fileName)
     console.log("Video rendered and sent!");
   } catch (err) {
     console.error(err);
