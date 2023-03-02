@@ -21,8 +21,9 @@ var cors = require('cors')
 var jsonParser = bodyParser.json()
 const app = express();
 const port = process.env.PORT || 8000;
+const deleteTime = 300000;
 const payloadTemplate = {
-  "payload":{
+  "payload": {
     videoCategory: 'string',
     applicationId: 'string || number',
     companyId: 'string || number',
@@ -30,40 +31,40 @@ const payloadTemplate = {
   },
 }
 const VIDEO_CATEGORIES = {
-  "Construction":{
-    key:"Construction",
-    payload:{
-      customerName:'string',
-      companyName:'string',
-      loanAmount:'string',
-      installmentAmount:'string',
-      installmentFrequency:'string',
-      startDate:'string',
-      endDate:'string',
+  "Construction": {
+    key: "Construction",
+    payload: {
+      customerName: 'string',
+      companyName: 'string',
+      loanAmount: 'string',
+      installmentAmount: 'string',
+      installmentFrequency: 'string',
+      startDate: 'string',
+      endDate: 'string',
     }
   },
-  "Barber":{
-    key:"Barber",
-    payload:{
-      customerName:'string',
-      companyName:'string',
-      loanAmount:'string',
-      installmentAmount:'string',
-      installmentFrequency:'string',
-      startDate:'string',
-      endDate:'string',
+  "Barber": {
+    key: "Barber",
+    payload: {
+      customerName: 'string',
+      companyName: 'string',
+      loanAmount: 'string',
+      installmentAmount: 'string',
+      installmentFrequency: 'string',
+      startDate: 'string',
+      endDate: 'string',
     }
   },
-  "HairDresser":{
-    key:"HairDresser",
-    payload:{
-      customerName:'string',
-      companyName:'string',
-      loanAmount:'string',
-      installmentAmount:'string',
-      installmentFrequency:'string',
-      startDate:'string',
-      endDate:'string',
+  "HairDresser": {
+    key: "HairDresser",
+    payload: {
+      customerName: 'string',
+      companyName: 'string',
+      loanAmount: 'string',
+      installmentAmount: 'string',
+      installmentFrequency: 'string',
+      startDate: 'string',
+      endDate: 'string',
     }
   },
 }
@@ -73,17 +74,17 @@ const outputDir = '/Users/cibak/Documents/AtomBits/RemotionVideoServer/output_vi
 const cache = new Map<string, string>();
 
 app.use(cors());
-app.get("/videoEnum",async (req,res)=>{
+app.get("/videoEnum", async (req, res) => {
   req.query;
   res.writeHead(200)
-  res.write(JSON.stringify({...VIDEO_CATEGORIES,...payloadTemplate}))
+  res.write(JSON.stringify({ ...VIDEO_CATEGORIES, ...payloadTemplate }))
   res.end()
 })
-app.post('/generateVideo',jsonParser,async (req,res)=>{
+app.post('/generateVideo', jsonParser, async (req, res) => {
   try {
     req.body
-    if(!req.body.applicationId || !req.body.videoCategory || !req.body.videoData){
-      res.writeHead(400,'Bad Request')
+    if (!req.body.applicationId || !req.body.videoCategory || !req.body.videoData) {
+      res.writeHead(400, 'Bad Request')
       res.write(JSON.stringify({
         message: 'Bad Request! payload invalid',
         status: 400
@@ -104,7 +105,7 @@ app.post('/generateVideo',jsonParser,async (req,res)=>{
     const tmpDir = await fs.promises.mkdtemp(
       path.join(os.tmpdir(), "remotion-")
     );
-    console.log('req.body.videoData',req.body.videoData)
+    console.log('req.body.videoData', req.body.videoData)
     const { assetsInfo } = await renderFrames({
       config: video,
       webpackBundle: bundled,
@@ -120,7 +121,7 @@ app.post('/generateVideo',jsonParser,async (req,res)=>{
       // compositionId,
       imageFormat: "jpeg",
     });
-    const fileName = applicationId+".mp4";
+    const fileName = applicationId + ".mp4";
     const finalOutput = path.join(outputDir, fileName);
     const extraOutputFilename = `${outputDir}/${applicationId}_1.mp4`;
     await stitchFramesToVideo({
@@ -130,30 +131,40 @@ app.post('/generateVideo',jsonParser,async (req,res)=>{
       height: video.height,
       width: video.width,
       outputLocation: finalOutput,
-      internalOptions:{
+      internalOptions: {
         imageFormat: "jpeg",
-        preferLossless:false,
-        preEncodedFileLocation:null
+        preferLossless: false,
+        preEncodedFileLocation: null
       },
       assetsInfo,
     });
     ffmpeg(finalOutput)
-    .fps(30)
-    .addOptions(["-crf 28"])
-    .on("end", () => {
-      console.log('on End');
-      const stream = fs.createReadStream(extraOutputFilename);
-    res.set({
-      'Content-Disposition': `attachment; filename='${fileName}'`,
-      'Content-Type': 'application/video',
-    });
-    res.setHeader('fileName',fileName)
-    stream.pipe(res);
-    })
-    .on("error", (err:any) => {
-      console.log({ statusCode: 500, text: err.message });
-    })
-    .save(extraOutputFilename);
+      .fps(30)
+      .addOptions(["-crf 28"])
+      .on("end", () => {
+        console.log('on End');
+        const stream = fs.createReadStream(extraOutputFilename);
+        res.set({
+          'Content-Disposition': `attachment; filename='${fileName}'`,
+          'Content-Type': 'application/video',
+        });
+        res.setHeader('fileName', fileName)
+        stream.pipe(res);
+        setTimeout(async () => {
+          await fs.unlink(extraOutputFilename, (err) => {
+            if (err) throw err;
+            console.log(extraOutputFilename + ' was deleted');
+          });
+          await fs.unlink(finalOutput, (err) => {
+            if (err) throw err;
+            console.log(finalOutput + ' was deleted');
+          });
+        }, deleteTime)
+      })
+      .on("error", (err: any) => {
+        console.log({ statusCode: 500, text: err.message });
+      })
+      .save(extraOutputFilename);
     // res.download(outputDir+'/'+fileName)
     console.log("Video rendered and sent!");
   } catch (err) {
@@ -214,15 +225,15 @@ app.get("/", async (req, res) => {
       height: video.height,
       width: video.width,
       outputLocation: finalOutput,
-      internalOptions:{
+      internalOptions: {
         imageFormat: "jpeg",
-        preferLossless:false,
-        preEncodedFileLocation:null
+        preferLossless: false,
+        preEncodedFileLocation: null
       },
       assetsInfo,
     });
     // cache.set(JSON.stringify(req.query), finalOutput);
-    res.download(outputDir+'/out.mp4')
+    res.download(outputDir + '/out.mp4')
     // sendFile(finalOutput);
     console.log("Video rendered and sent!");
   } catch (err) {
