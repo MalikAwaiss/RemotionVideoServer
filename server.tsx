@@ -15,9 +15,10 @@ import {
   stitchFramesToVideo,
 } from "@remotion/renderer";
 import express from "express";
+const ffmpeg = require("fluent-ffmpeg");
 var bodyParser = require('body-parser')
-var jsonParser = bodyParser.json()
 var cors = require('cors')
+var jsonParser = bodyParser.json()
 const app = express();
 const port = process.env.PORT || 8000;
 const payloadTemplate = {
@@ -121,6 +122,7 @@ app.post('/generateVideo',jsonParser,async (req,res)=>{
     });
     const fileName = applicationId+".mp4";
     const finalOutput = path.join(outputDir, fileName);
+    const extraOutputFilename = `${outputDir}/${applicationId}_1.mp4`;
     await stitchFramesToVideo({
       dir: tmpDir,
       force: true,
@@ -135,13 +137,23 @@ app.post('/generateVideo',jsonParser,async (req,res)=>{
       },
       assetsInfo,
     });
-    const stream = fs.createReadStream(finalOutput);
+    ffmpeg(finalOutput)
+    .fps(30)
+    .addOptions(["-crf 28"])
+    .on("end", () => {
+      console.log('on End');
+      const stream = fs.createReadStream(extraOutputFilename);
     res.set({
       'Content-Disposition': `attachment; filename='${fileName}'`,
       'Content-Type': 'application/video',
     });
     res.setHeader('fileName',fileName)
     stream.pipe(res);
+    })
+    .on("error", (err:any) => {
+      console.log({ statusCode: 500, text: err.message });
+    })
+    .save(extraOutputFilename);
     // res.download(outputDir+'/'+fileName)
     console.log("Video rendered and sent!");
   } catch (err) {
