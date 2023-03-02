@@ -65,27 +65,23 @@ export const Construction = (props) => {
         durationInFrames={DURATIONS.INTRO.DURATION}
       >
         <VideoWrapper videoFile={introVid} duration={DURATIONS.INTRO} />
-        {/* <Intro duration={DURATIONS.INTRO} /> */}
       </Sequence>
       <Sequence
         from={DURATIONS.CUSTOMER_NAME.FROM}
         durationInFrames={DURATIONS.CUSTOMER_NAME.DURATION}
       >
         <VideoWrapper videoFile={nameSlide} CustomComponent={<CustomerNameAnimation name={videoData.customerName??'Robert Pattison'} />} duration={DURATIONS.CUSTOMER_NAME} />
-        {/* <Intro duration={DURATIONS.INTRO} /> */}
       </Sequence>
       <Sequence
         from={DURATIONS.LOAN_AMOUNT.FROM}
         durationInFrames={DURATIONS.LOAN_AMOUNT.DURATION}
       >
         <VideoWrapper videoFile={loanAmount} CustomComponent={<LoanAmountText amount={videoData.loanAmount??'5000£'} />} duration={DURATIONS.LOAN_AMOUNT} />
-        {/* <Intro duration={DURATIONS.INTRO} /> */}
       </Sequence>
       <Sequence
         from={DURATIONS.FIRST_MID.FROM}
         durationInFrames={DURATIONS.FIRST_MID.DURATION}
       >
-        {/* <FirstMid duration={DURATIONS.FIRST_MID} /> */}
         <VideoWrapper videoFile={firstMidVid} duration={DURATIONS.FIRST_MID} />
       </Sequence>
       <Sequence
@@ -93,21 +89,18 @@ export const Construction = (props) => {
         durationInFrames={DURATIONS.LOAN_FEATURES.DURATION}
       >
         <VideoWrapper videoFile={loanFeatures} CustomComponent={<LoanFeaturesText  companyName={videoData.companyName??"Constructions Solutions Ltd."} />} duration={DURATIONS.LOAN_FEATURES} />
-        {/* <Intro duration={DURATIONS.INTRO} /> */}
       </Sequence>
       <Sequence
         from={DURATIONS.LOAN_INSTALLMENTS.FROM}
         durationInFrames={DURATIONS.LOAN_INSTALLMENTS.DURATION}
       >
         <VideoWrapper videoFile={loanInstallments} CustomComponent={<LoanInstallmentsText  installmentText={videoData.installmentAmount?videoData.installmentAmount+' per working weekday':"188£ per working weekday"} totalAmount={videoData.loanAmount??'5000£'} startDate={videoData.startDate??"10/02/2023"} endDate={videoData.endDate?? "20/04/2026"} />} duration={DURATIONS.LOAN_INSTALLMENTS} />
-        {/* <Intro duration={DURATIONS.INTRO} /> */}
       </Sequence>
       <Sequence
         from={DURATIONS.SECOND_MID.FROM}
         durationInFrames={DURATIONS.SECOND_MID.DURATION}
       >
         <VideoWrapper videoFile={secondMidVid} duration={DURATIONS.SECOND_MID} />
-        {/* <SecondMid duration={DURATIONS.SECOND_MID} /> */}
       </Sequence>
       <Sequence
         from={DURATIONS.ENDING.FROM}

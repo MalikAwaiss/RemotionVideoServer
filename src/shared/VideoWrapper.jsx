@@ -7,7 +7,7 @@ import {
   } from "remotion";
   import { Animated, Fade } from "remotion-animated";
   
-  export default ({ duration = {},videoFile,CustomComponent = null }) => {
+  export default ({ duration = {},videoFile,CustomComponent = null, videoPlayerProps={} }) => {
     const frame = useCurrentFrame();
     const { durationInFrames, fps } = useVideoConfig();
   
@@ -48,6 +48,7 @@ import {
           }}
           autoPlay
           loop
+          {...videoPlayerProps??{}}
         />
         {
           CustomComponent ? 
