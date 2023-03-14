@@ -43,8 +43,8 @@ const VIDEO_CATEGORIES = {
       endDate: 'string',
     }
   },
-  "Barber": {
-    key: "Barber",
+  "Restaurant": {
+    key: "Restaurant",
     payload: {
       customerName: 'string',
       companyName: 'string',
@@ -69,7 +69,7 @@ const VIDEO_CATEGORIES = {
   },
 }
 const compositionId = VIDEO_CATEGORIES.Construction.key;
-const outputDir = '/Users/cibak/Documents/AtomBits/RemotionVideoServer/output_video';
+const outputDir = process.cwd()+'/output_video';
 
 const cache = new Map<string, string>();
 
@@ -82,6 +82,7 @@ app.get("/videoEnum", async (req, res) => {
 })
 app.post('/generateVideo', jsonParser, async (req, res) => {
   try {
+    console.log('Current directory: ' + process.cwd());
     req.body
     if (!req.body.applicationId || !req.body.videoCategory || !req.body.videoData) {
       res.writeHead(400, 'Bad Request')
