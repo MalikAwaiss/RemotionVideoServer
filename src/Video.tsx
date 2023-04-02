@@ -1,9 +1,9 @@
 import { Composition } from "remotion";
 
+import { DynamicVideo } from "./components/DynamicVideo";
 import { Construction } from "./components/Construction";
 import { HairDresser } from "./components/HairDresser";
 import { getFont } from "./Video/helpers/load-font";
-
 // the audio duration is 58seconds + 4 frames
 
 getFont();
@@ -11,6 +11,7 @@ getFont();
 export const RemotionVideo = () => {
   return (
     <>
+      <DynamicVideo />
       <Composition
         // You can take the "id" to render a video:
         // npx remotion render src/index.jsx <id> out/video.mp4
