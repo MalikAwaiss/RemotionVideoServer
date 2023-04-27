@@ -191,7 +191,7 @@ app.post('/generateVideo', jsonParser, async (req, res) => {
     });
   }
 })
-app.get("/", async (req, res) => {
+app.get("/initialSetup", async (req, res) => {
   const sendFile = (file: string) => {
     // res.writeHead(200, { "Content-Length": 2000, "Content-Type": "video/mp4" });
     fs.createReadStream(file)
@@ -259,6 +259,11 @@ app.get("/", async (req, res) => {
       error: err,
     });
   }
+});
+app.get("/", async (req, res) => {
+  req.baseUrl
+  res.send('Hello World')
+  res.end()
 });
 
 app.listen(port);
