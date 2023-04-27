@@ -7,7 +7,7 @@
   },
   "main": "server.tsx",
   "scripts": {
-    "start": "remotion preview src/index.tsx",
+    "start": "ts-node server.tsx",
     "tutorial": "remotion preview src/tutorial.tsx",
     "upgrade": "remotion upgrade",
     "server": "ts-node server.tsx",
