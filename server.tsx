@@ -68,8 +68,20 @@ const VIDEO_CATEGORIES = {
       endDate: 'string',
     }
   },
+  "DynamicVideo": {
+    key: "DynamicVideo",
+    payload: {
+      customerName: 'string',
+      companyName: 'string',
+      loanAmount: 'string',
+      installmentAmount: 'string',
+      installmentFrequency: 'string',
+      startDate: 'string',
+      endDate: 'string',
+    }
+  },
 }
-const compositionId = VIDEO_CATEGORIES.Construction.key;
+const compositionId = VIDEO_CATEGORIES.DynamicVideo.key;
 const outputDir = process.cwd() + '/output_video';
 
 const cache = new Map<string, string>();
@@ -110,7 +122,7 @@ app.post('/generateVideo', jsonParser, async (req, res) => {
       return
     }
     const bundled = await bundle(path.join(__dirname, "./src/index.tsx"));
-    const comps = await getCompositions(bundled, { inputProps: req.query });
+    const comps = await getCompositions(bundled, { inputProps: { ...req.query, customPath:req.body.videoPath??'https://file-examples.com/storage/fe21053bab6446bba9a0947/2017/04/file_example_MP4_640_3MG.mp4' } });
     const videoIds = Object.keys(VIDEO_CATEGORIES);
     const video = comps.find((c) => videoIds.includes(c.id.toString()));
     const applicationId = req.body.applicationId;
@@ -134,7 +146,7 @@ app.post('/generateVideo', jsonParser, async (req, res) => {
       },
       parallelism: null,
       outputDir: tmpDir,
-      inputProps: req.body.videoData,
+      inputProps: {...req.body.videoData,customPath:req.body.videoPath??'https://file-examples.com/storage/fe21053bab6446bba9a0947/2017/04/file_example_MP4_640_3MG.mp4'},
       // compositionId,
       imageFormat: "jpeg",
     });
@@ -184,6 +196,7 @@ app.post('/generateVideo', jsonParser, async (req, res) => {
       .save(extraOutputFilename);
     // res.download(outputDir+'/'+fileName)
     console.log("Video rendered and sent!");
+
   } catch (err) {
     console.error(err);
     res.json({

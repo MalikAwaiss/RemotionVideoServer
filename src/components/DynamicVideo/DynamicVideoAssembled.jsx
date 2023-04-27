@@ -67,7 +67,7 @@ const TEXTS = [
       fontFamily: 'montserrat',
       top: 272,
       left: 105,
-      fontWeight:'bolder'
+      fontWeight: 'bolder'
       // width: '426px'
     },
     positionInVideo: 1.2,
@@ -117,15 +117,28 @@ const TEXTS = [
   },
 ]
 export const DynamicVideoAssembled = (props) => {
-  const videoData = { ...props };
+  const { videoData, customPath = 'https://file-examples.com/storage/fe21053bab6446bba9a0947/2017/04/file_example_MP4_640_3MG.mp4' } = props;
+  console.log('props', props, '')
+  // const pathh = 'https://file-examples.com/storage/fe21053bab6446bba9a0947/2017/04/file_example_MP4_640_3MG.mp4'
+  // const customVideo = require(`/Users/cibak/Documents/AtomBits/RemotionVideoServer/src/components/DynamicVideo/Intro/intro-1.mp4`)
   const [duration, setDuration] = React.useState(5);
   // A <AbsoluteFill> is just a absolutely positioned <div>!
+  // React.useEffect(()=>{
+  //   const test =async() => {
+  //     const response = await fetch(pathh); // replace with the path to your local video file
+  //     const videoBlob = await response.blob();
+  //     const videoUrl = URL.createObjectURL(videoBlob);
+  //     setVideoSrc(videoUrl);
+
+  //   }
+  //   test()
+  // }, [])
   React.useEffect(() => {
-    getVideoMetadata(introVid).then(res => {
-      console.log('res', res)
+    getVideoMetadata(customPath).then(res => {
+      console.log('res-getVideoMetadata', res)
       setDuration(res.durationInSeconds)
     }).catch(err => {
-      console.log('err', err)
+      console.log('err-getVideoMetadata', err)
     })
   }, [])
   return (
@@ -135,20 +148,23 @@ export const DynamicVideoAssembled = (props) => {
         durationInFrames={DURATIONS.INTRO.DURATION}
       > */}
       <div style={{
-        position:'absolute',
-        top:0,
-        left:0,
-        width:'100%',
-        height:'100%',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
       }}>
-        <VideoWrapper videoFile={introVid} duration={DURATIONS.INTRO} />
+        <VideoWrapper videoFile={customPath} duration={{
+          FROM: 0,
+          DURATION: duration,
+        }} />
       </div>
       {/* </Sequence> */}
       {
         TEXTS.map((item, i) => {
           return <Sequence
-            from={Math.floor(item.positionInVideo*100)}
-            durationInFrames={item.duration*100}
+            from={Math.floor(item.positionInVideo * 100)}
+            durationInFrames={item.duration * 100}
             key={i}
 
           >

@@ -1,18 +1,19 @@
 import { getVideoMetadata } from "@remotion/media-utils";
 import React from "react";
-import { Composition } from "remotion";
+import { Composition, getInputProps } from "remotion";
 import { DynamicVideoAssembled } from "./DynamicVideoAssembled";
 import introVid from "../DynamicVideo/Intro/intro-1.mp4";
 
 
 // the audio duration is 58seconds + 4 frames
-
+const inputProps = getInputProps();
 
 export const DynamicVideo = () => {
     const [duration,setDuration] = React.useState(5);
     // A <AbsoluteFill> is just a absolutely positioned <div>!
+    console.log('inputProps',inputProps)
     React.useEffect(()=>{
-        getVideoMetadata(introVid).then(res=>{
+        getVideoMetadata(inputProps.customPath??'https://file-examples.com/storage/fe21053bab6446bba9a0947/2017/04/file_example_MP4_640_3MG.mp4').then(res=>{
             console.log('res',res)
             setDuration(res.durationInSeconds)
         }).catch(err=>{
