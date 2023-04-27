@@ -5,6 +5,7 @@
   "engines": {
     "node": "16.17.x"
   },
+  "main": "server.tsx",
   "scripts": {
     "start": "remotion preview src/index.tsx",
     "tutorial": "remotion preview src/tutorial.tsx",
