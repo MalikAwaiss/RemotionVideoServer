@@ -1,7 +1,10 @@
 {
-  "name": "remotion-template",
+  "name": "remotion-video-server",
   "version": "1.0.0",
   "description": "My Remotion video",
+  "engines": {
+    "node": "16.17.x"
+  },
   "scripts": {
     "start": "remotion preview src/index.tsx",
     "tutorial": "remotion preview src/tutorial.tsx",
