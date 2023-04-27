@@ -16,6 +16,7 @@ import {
 } from "@remotion/renderer";
 import express from "express";
 const ffmpeg = require("fluent-ffmpeg");
+const https = require("https");
 var bodyParser = require('body-parser')
 var cors = require('cors')
 var jsonParser = bodyParser.json()
@@ -43,8 +44,8 @@ const VIDEO_CATEGORIES = {
       endDate: 'string',
     }
   },
-  "Barber": {
-    key: "Barber",
+  "Restaurant": {
+    key: "Restaurant",
     payload: {
       customerName: 'string',
       companyName: 'string',
@@ -69,7 +70,7 @@ const VIDEO_CATEGORIES = {
   },
 }
 const compositionId = VIDEO_CATEGORIES.Construction.key;
-const outputDir = '/Users/cibak/Documents/AtomBits/RemotionVideoServer/output_video';
+const outputDir = process.cwd() + '/output_video';
 
 const cache = new Map<string, string>();
 
@@ -80,8 +81,24 @@ app.get("/videoEnum", async (req, res) => {
   res.write(JSON.stringify({ ...VIDEO_CATEGORIES, ...payloadTemplate }))
   res.end()
 })
+
+app.get('/testt', async () => {
+  const url = "https://file-examples.com/storage/fef1706276640fa2f99a5a4/2017/04/file_example_MP4_1280_10MG.mp4";
+  https.get(url, (res: any) => {
+    const path = "testing.mp4";
+    const writeStream = fs.createWriteStream(outputDir + '/' + path);
+
+    res.pipe(writeStream);
+
+    writeStream.on("finish", () => {
+      writeStream.close();
+      console.log("Download Completed!");
+    })
+  })
+})
 app.post('/generateVideo', jsonParser, async (req, res) => {
   try {
+    console.log('Current directory: ' + process.cwd());
     req.body
     if (!req.body.applicationId || !req.body.videoCategory || !req.body.videoData) {
       res.writeHead(400, 'Bad Request')
