@@ -9,11 +9,11 @@ import introVid from "../DynamicVideo/Intro/intro-1.mp4";
 const inputProps = getInputProps();
 
 export const DynamicVideo = () => {
-    const [duration,setDuration] = React.useState(5);
+    const [duration,setDuration] = React.useState(30);
     // A <AbsoluteFill> is just a absolutely positioned <div>!
     console.log('inputProps',inputProps)
     React.useEffect(()=>{
-        getVideoMetadata(inputProps.customPath??'https://file-examples.com/storage/fe21053bab6446bba9a0947/2017/04/file_example_MP4_640_3MG.mp4').then(res=>{
+        getVideoMetadata(inputProps.customPath??'https://file-examples.com/storage/fe644084cb644d3709528c4/2017/04/file_example_MP4_1280_10MG.mp4').then(res=>{
             console.log('res',res)
             setDuration(res.durationInSeconds)
         }).catch(err=>{

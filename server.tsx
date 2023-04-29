@@ -8,10 +8,11 @@
 import fs from "fs";
 import os from "os";
 import path from "path";
-import { bundle } from "@remotion/bundler";
+import { bundle, WebpackOverrideFn } from "@remotion/bundler";
 import {
   getCompositions,
   renderFrames,
+  renderMedia,
   stitchFramesToVideo,
 } from "@remotion/renderer";
 import express from "express";
@@ -93,7 +94,12 @@ app.get("/videoEnum", async (req, res) => {
   res.write(JSON.stringify({ ...VIDEO_CATEGORIES, ...payloadTemplate }))
   res.end()
 })
-
+export const webpackOverride: WebpackOverrideFn = (currentConfiguration: any) => {
+  return {
+    ...currentConfiguration,
+    // Your override here
+  };
+};
 app.get('/testt', async () => {
   const url = "https://file-examples.com/storage/fef1706276640fa2f99a5a4/2017/04/file_example_MP4_1280_10MG.mp4";
   https.get(url, (res: any) => {
@@ -121,8 +127,10 @@ app.post('/generateVideo', jsonParser, async (req, res) => {
       res.end()
       return
     }
-    const bundled = await bundle(path.join(__dirname, "./src/index.tsx"));
-    const comps = await getCompositions(bundled, { inputProps: { ...req.query, customPath:req.body.videoPath??'https://file-examples.com/storage/fe21053bab6446bba9a0947/2017/04/file_example_MP4_640_3MG.mp4' } });
+    const bundled = await bundle(path.join(__dirname, "./src/index.tsx"),()=>{},{
+      webpackOverride
+    });
+    const comps = await getCompositions(bundled, { inputProps: { ...req.query, customPath:req.body.videoPath??'https://file-examples.com/storage/fe644084cb644d3709528c4/2017/04/file_example_MP4_1280_10MG.mp4' } });
     const videoIds = Object.keys(VIDEO_CATEGORIES);
     const video = comps.find((c) => videoIds.includes(c.id.toString()));
     const applicationId = req.body.applicationId;
@@ -131,42 +139,53 @@ app.post('/generateVideo', jsonParser, async (req, res) => {
     }
     res.set("content-type", "video/mp4");
 
-    const tmpDir = await fs.promises.mkdtemp(
-      path.join(os.tmpdir(), "remotion-")
-    );
-    console.log('req.body.videoData', req.body.videoData)
-    const { assetsInfo } = await renderFrames({
-      config: video,
-      webpackBundle: bundled,
-      onStart: () => console.log("Rendering frames..."),
-      onFrameUpdate: (f) => {
-        if (f % 10 === 0) {
-          console.log(`Rendered frame ${f}`);
-        }
-      },
-      parallelism: null,
-      outputDir: tmpDir,
-      inputProps: {...req.body.videoData,customPath:req.body.videoPath??'https://file-examples.com/storage/fe21053bab6446bba9a0947/2017/04/file_example_MP4_640_3MG.mp4'},
-      // compositionId,
-      imageFormat: "jpeg",
-    });
+    // const tmpDir = await fs.promises.mkdtemp(
+    //   path.join(os.tmpdir(), "remotion-")
+    // );
+    // console.log('req.body.videoData', req.body.videoData)
+    // const { assetsInfo } = await renderFrames({
+    //   config: video,
+    //   serveUrl: bundled,
+    //   onStart: () => console.log("Rendering frames..."),
+    //   onFrameUpdate: (f) => {
+    //     if (f % 10 === 0) {
+    //       console.log(`Rendered frame ${f}`);
+    //     }
+    //   },
+    //   parallelism: null,
+    //   outputDir: tmpDir,
+    //   inputProps: {...req.body.videoData,customPath:req.body.videoPath??'https://file-examples.com/storage/fe644084cb644d3709528c4/2017/04/file_example_MP4_1280_10MG.mp4'},
+    //   // compositionId,
+    //   imageFormat: "jpeg",
+    // });
     const fileName = applicationId + ".mp4";
     const finalOutput = path.join(outputDir, fileName);
     const extraOutputFilename = `${outputDir}/${applicationId}_1.mp4`;
-    await stitchFramesToVideo({
-      dir: tmpDir,
-      force: true,
-      fps: video.fps,
-      height: video.height,
-      width: video.width,
-      outputLocation: finalOutput,
-      internalOptions: {
-        imageFormat: "jpeg",
-        preferLossless: false,
-        preEncodedFileLocation: null
-      },
-      assetsInfo,
+    const props = {...req.body.videoData,customPath:req.body.videoPath??'https://file-examples.com/storage/fe644084cb644d3709528c4/2017/04/file_example_MP4_1280_10MG.mp4'}
+    await renderMedia({
+      composition:video,
+      serveUrl: bundled,
+      outputLocation:finalOutput,
+      codec: "h264",
+      inputProps:props,
+      onProgress: (progress)=>{
+        console.log(`Rendered frame ${progress.progress}`);
+      }
     });
+    // await stitchFramesToVideo({
+    //   dir: tmpDir,
+    //   force: true,
+    //   fps: video.fps,
+    //   height: video.height,
+    //   width: video.width,
+    //   outputLocation: finalOutput,
+    //   internalOptions: {
+    //     imageFormat: "jpeg",
+    //     preferLossless: false,
+    //     preEncodedFileLocation: null
+    //   },
+    //   assetsInfo,
+    // });
     ffmpeg(finalOutput)
       .fps(30)
       .addOptions(["-crf 28"])

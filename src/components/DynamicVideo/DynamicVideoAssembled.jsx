@@ -117,9 +117,9 @@ const TEXTS = [
   },
 ]
 export const DynamicVideoAssembled = (props) => {
-  const { videoData, customPath = 'https://file-examples.com/storage/fe21053bab6446bba9a0947/2017/04/file_example_MP4_640_3MG.mp4' } = props;
+  const { videoData, customPath = 'https://file-examples.com/storage/fe644084cb644d3709528c4/2017/04/file_example_MP4_1280_10MG.mp4' } = props;
   console.log('props', props, '')
-  // const pathh = 'https://file-examples.com/storage/fe21053bab6446bba9a0947/2017/04/file_example_MP4_640_3MG.mp4'
+  // const pathh = 'https://file-examples.com/storage/fe644084cb644d3709528c4/2017/04/file_example_MP4_1280_10MG.mp4'
   // const customVideo = require(`/Users/cibak/Documents/AtomBits/RemotionVideoServer/src/components/DynamicVideo/Intro/intro-1.mp4`)
   const [duration, setDuration] = React.useState(5);
   // A <AbsoluteFill> is just a absolutely positioned <div>!
