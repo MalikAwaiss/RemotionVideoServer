@@ -7,10 +7,10 @@
   },
   "main": "server.tsx",
   "scripts": {
-    "start": "ts-node --max-heap-size=512 server.tsx",
+    "start": "ts-node server.tsx",
     "tutorial": "remotion preview src/tutorial.tsx",
     "upgrade": "remotion upgrade",
-    "server": "ts-node --max-heap-size=512 server.tsx",
+    "server": "ts-node server.tsx",
     "test": "eslint src --ext ts,tsx,js,jsx && tsc",
     "lint": "eslint --ext .ts,.tsx . --max-warnings 0",
     "build-server": "tsc --project tsconfig.server.json",
