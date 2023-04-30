@@ -3,4 +3,4 @@ libcairo2-dev
 libjpeg-dev
 libgif-dev
 libatk1.0-dev
-libatk-bridge-2.0
+libatk-bridge2.0-0
