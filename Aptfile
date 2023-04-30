@@ -4,3 +4,4 @@ libjpeg-dev
 libgif-dev
 libatk1.0-dev
 libatk-bridge2.0-0
+libdrm2
