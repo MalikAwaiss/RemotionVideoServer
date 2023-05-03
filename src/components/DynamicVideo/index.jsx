@@ -9,17 +9,17 @@ import introVid from "../DynamicVideo/Intro/intro-1.mp4";
 const inputProps = getInputProps();
 
 export const DynamicVideo = () => {
-    const [duration,setDuration] = React.useState(30);
-    // A <AbsoluteFill> is just a absolutely positioned <div>!
-    console.log('inputProps',inputProps)
-    React.useEffect(()=>{
-        getVideoMetadata(inputProps.customPath??'https://file-examples.com/storage/fe644084cb644d3709528c4/2017/04/file_example_MP4_1280_10MG.mp4').then(res=>{
-            console.log('res',res)
-            setDuration(res.durationInSeconds)
-        }).catch(err=>{
-            console.log('err',err)
-        })
-    },[])
+  const [duration, setDuration] = React.useState(process.env.DURATION_IN_FRAMES ? parseInt(process.env.DURATION_IN_FRAMES) : 30);
+  // A <AbsoluteFill> is just a absolutely positioned <div>!
+  console.log('inputProps', inputProps)
+  // React.useEffect(() => {
+  //   getVideoMetadata(inputProps.customPath ?? 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_10mb.mp4').then(res => {
+  //     console.log('res', res)
+  //     setDuration(res.durationInSeconds)
+  //   }).catch(err => {
+  //     console.log('err', err)
+  //   })
+  // }, [])
   return (
     <>
       <Composition
@@ -27,13 +27,13 @@ export const DynamicVideo = () => {
         // npx remotion render src/index.jsx <id> out/video.mp4
         id="DynamicVideo"
         component={DynamicVideoAssembled}
-        durationInFrames={Math.floor(duration*30.145)}
+        durationInFrames={Math.floor(duration * 30.145)}
         // durationInFrames={500}
         fps={30}
         width={1920}
         height={1080}
-        // You can override these props for each render:
-        // https://www.remotion.dev/docs/parametrized-rendering
+      // You can override these props for each render:
+      // https://www.remotion.dev/docs/parametrized-rendering
       />
     </>
   );

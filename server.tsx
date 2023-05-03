@@ -130,7 +130,7 @@ app.post('/generateVideo', jsonParser, async (req, res) => {
     const bundled = await bundle(path.join(__dirname, "./src/index.tsx"), () => { }, {
       webpackOverride
     });
-    const comps = await getCompositions(bundled, { inputProps: { ...req.query, customPath: req.body.videoPath ?? 'https://file-examples.com/storage/fe644084cb644d3709528c4/2017/04/file_example_MP4_1280_10MG.mp4' } });
+    const comps = await getCompositions(bundled, { envVariables: { DURATION_IN_FRAMES: req.body.videoLength ? req.body.videoLength.toString() : '60' }, inputProps: { ...req.query, customPath: req.body.videoPath ?? 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_10mb.mp4' } });
     const videoIds = Object.keys(VIDEO_CATEGORIES);
     const video = comps.find((c) => videoIds.includes(c.id.toString()));
     const applicationId = req.body.applicationId;
@@ -161,7 +161,7 @@ app.post('/generateVideo', jsonParser, async (req, res) => {
     const fileName = applicationId + ".mp4";
     const finalOutput = path.join(outputDir, fileName);
     const extraOutputFilename = `${outputDir}/${applicationId}_1.mp4`;
-    const props = { ...req.body.videoData, customPath: req.body.videoPath ?? 'https://file-examples.com/storage/fe644084cb644d3709528c4/2017/04/file_example_MP4_1280_10MG.mp4' }
+    const props = { videoData: req.body.videoData, customPath: req.body.videoPath ?? 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_10mb.mp4' }
     let progressVal = 0;
     await renderMedia({
       composition: video,
@@ -170,10 +170,10 @@ app.post('/generateVideo', jsonParser, async (req, res) => {
       codec: "h264",
       inputProps: props,
       onProgress: (progress) => {
-        const currentProgress = Math.floor(progress.progress * 10);
+        const currentProgress = Math.floor(progress.progress * 100);
         if (progressVal < currentProgress) {
           progressVal = currentProgress;
-          console.log(`Rendered frame ${progressVal}`);
+          console.log(`Rendered frame ${progressVal}%`);
         }
       }
     });

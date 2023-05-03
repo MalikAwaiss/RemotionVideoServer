@@ -1,5 +1,5 @@
 import {
-  AbsoluteFill, Sequence
+  AbsoluteFill, Sequence, useVideoConfig
 } from "remotion";
 import VideoWrapper from "../../shared/VideoWrapper";
 
@@ -117,11 +117,19 @@ const TEXTS = [
   },
 ]
 export const DynamicVideoAssembled = (props) => {
-  const { videoData, customPath = 'https://file-examples.com/storage/fe644084cb644d3709528c4/2017/04/file_example_MP4_1280_10MG.mp4' } = props;
+  const { videoData, customPath = 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_10mb.mp4' } = props;
   console.log('props', props, '')
+  const { durationInFrames: compositionDuration, setDurationInFrames } = useVideoConfig();
+  const [duration, setDuration] = React.useState(process.env.DURATION_IN_FRAMES ? parseInt(process.env.DURATION_IN_FRAMES) : 30);
+
+  // React.useEffect(() => {
+  //   // Update the composition duration if the durationInFrames prop has changed
+  //   if (compositionDuration !== durationInFrames) {
+  //     setDurationInFrames(durationInFrames);
+  //   }
+  // }, [durationInFrames, setDurationInFrames]);
   // const pathh = 'https://file-examples.com/storage/fe644084cb644d3709528c4/2017/04/file_example_MP4_1280_10MG.mp4'
   // const customVideo = require(`/Users/cibak/Documents/AtomBits/RemotionVideoServer/src/components/DynamicVideo/Intro/intro-1.mp4`)
-  const [duration, setDuration] = React.useState(5);
   // A <AbsoluteFill> is just a absolutely positioned <div>!
   // React.useEffect(()=>{
   //   const test =async() => {
@@ -133,14 +141,17 @@ export const DynamicVideoAssembled = (props) => {
   //   }
   //   test()
   // }, [])
-  React.useEffect(() => {
-    getVideoMetadata(customPath).then(res => {
-      console.log('res-getVideoMetadata', res)
-      setDuration(res.durationInSeconds)
-    }).catch(err => {
-      console.log('err-getVideoMetadata', err)
-    })
-  }, [])
+  // React.useEffect(() => {
+  //   getVideoMetadata(customPath).then(res => {
+  //     console.log('res-getVideoMetadata', res, compositionDuration)
+  //     if (res.durationInSeconds !== compositionDuration) {
+  //       setDurationInFrames(res.durationInSeconds);
+  //     }
+  //     setDuration(res.durationInSeconds)
+  //   }).catch(err => {
+  //     console.log('err-getVideoMetadata', err)
+  //   })
+  // }, [])
   return (
     <AbsoluteFill style={{ backgroundColor: "#FD6244" }}>
       {/* <Sequence
@@ -161,7 +172,7 @@ export const DynamicVideoAssembled = (props) => {
       </div>
       {/* </Sequence> */}
       {
-        TEXTS.map((item, i) => {
+        (videoData.texts ?? TEXTS).map((item, i) => {
           return <Sequence
             from={Math.floor(item.positionInVideo * 100)}
             durationInFrames={item.duration * 100}
